@@ -1,3 +1,77 @@
-<h1>
-  {{title}}
-</h1>
+<md-sidenav-container>
+  <md-sidenav #sidenav >
+    <br>
+    <md-input-container>
+      <input mdInput #myInput placeholder="Search for a Bot" [(ngModel)]="searchQuery" (input)="filterItem(myInput.value)" style="width:300px;padding:5px;">
+    </md-input-container>
+    <br>
+    <md-list>
+      <md-list-item class="md-2-line" *ngFor="let agent of filteredItems" style="cursor:pointer" (click)="selectBot(agent);sidenav.close()">
+        <div md-list-avatar class="imgavatar">
+          <div style="color: white;">{{agent.agent_name  | slice:0:1}}</div>
+        </div>
+        <h3 md-line mdTooltip="Chat with {{agent.agent_name}}"> {{agent.agent_name}} </h3>
+        <!-- <p md-line>{{agent.model}}</p> -->
+      </md-list-item>
+    </md-list>
+  </md-sidenav>
+
+ <md-toolbar color="primary">
+   <button type="button" md-button (click)="sidenav.open()" mdTooltip="click to see all the Bots">
+     <md-icon>menu</md-icon>
+   </button>
+   <span>Welcome to Bots-AI Messenger</span>
+   <!-- This fills the remaining space of the current row -->
+    <span style="flex: 1 1 auto"></span>
+    <span><h5>{{toolBarText}}</h5></span>
+</md-toolbar>
+
+ <div class="my-content">
+  <div *ngIf="botSelected">
+    <md-card class="bot-card">
+
+      <md-card-content class="bot-card-content" #scrollMe [scrollTop]="scrollMe.scrollHeight">
+        <div layout="column" style="float:right;width: 100%;">
+         <md-chip-list dense *ngFor="let msg of chatconversation">
+            <div *ngIf="msg.senderId == selectedAgent.agent_id" class="agentChip" layout="row" layout-align="center start">
+              <img ng-src="http://robohash.org/test" class="md-avatar message-avatar" src="http://robohash.org/test">
+              <md-chip color="secondary"  selected="true">{{msg.value}}</md-chip>
+            </div>
+            <div *ngIf="msg.senderId != selectedAgent.agent_id" class="userChip" layout="row" layout-align="center end">
+              <md-chip color="accent"  selected="true" >{{msg.value}}</md-chip>
+            </div>
+          </md-chip-list>
+
+        </div>
+      </md-card-content>
+      <md-card-footer class="bot-card-footer">
+        <!--  <md-card-actions>
+            <md-chip-list>
+              <md-chip>One fish</md-chip>
+              <md-chip>Two fish</md-chip>
+              <md-chip color="primary" selected="true">Primary fish</md-chip>
+              <md-chip color="accent" selected="true">Accent fish</md-chip>
+            </md-chip-list>
+        </md-card-actions> -->
+      </md-card-footer>
+    </md-card>
+    <br><br>
+    <md-card style="background:none">
+      <md-card-header></md-card-header>
+      <md-card-footer>
+        <div class="typeArea">
+          <input #botText type="text" placeholder="Ask me something" class="inputText" (keyup.enter)="onEnter(botText.value);botText.value=''"/>
+        </div>
+      </md-card-footer>
+    </md-card>
+   </div>
+
+    <div *ngIf="!botSelected" style="vertical-align: middle;text-align: center;">
+     <div>
+       <br><br><br>
+       <p><label>Welcome to Rasa Messenger</label></p>
+       <small>... Please select a Bot on the Left and start a conversation.</small>
+     </div>
+   </div>
+  </div>
+ </md-sidenav-container>
